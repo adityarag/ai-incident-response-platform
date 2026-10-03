@@ -1,0 +1,82 @@
+# ============================================================
+# AI Incident Response Platform — Docker Compose
+# ============================================================
+# Phase 1: API Gateway + PostgreSQL
+#
+# Usage:
+#   docker compose up --build
+#   docker compose down -v   (removes volumes too)
+# ============================================================
+
+services:
+  # ── PostgreSQL Database ──────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: platform-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-platform}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-platform} -d ${POSTGRES_DB:-incident_platform}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - platform-net
+
+  # ── Database Migrations ──────────────────────────────────
+  migrations:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    container_name: platform-migrations
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-platform}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - platform-net
+
+  # ── API Gateway ──────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: platform-api-gateway
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-platform}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+    ports:
+      - "${API_GATEWAY_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - platform-net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  platform-net:
+    driver: bridge
