@@ -193,7 +193,7 @@ ai-incident-response-platform/
 
 ## Supervisor
 
-Dr. Nishi Kant Kumar — Assistant Professor, CSE, BIT Mesra (Off-Campus Deoghar)
+Dr. Nishi Kant Kumar — Assistant Professor, CSE, BIT Mesra
 
 ## License
 
