@@ -77,6 +77,24 @@ app = FastAPI(
 )
 
 
+# ── Middleware ─────────────────────────────────────────────
+
+import uuid
+from fastapi import Header, HTTPException, Request, Response, status
+import httpx
+from app.config import get_settings
+
+settings = get_settings()
+
+
+@app.middleware("http")
+async def add_correlation_id(request: Request, call_next):
+    corr_id = request.headers.get("X-Correlation-ID", str(uuid.uuid4()))
+    response = await call_next(request)
+    response.headers["X-Correlation-ID"] = corr_id
+    return response
+
+
 # ── Health Endpoints ───────────────────────────────────────
 
 
@@ -124,3 +142,110 @@ def root():
         "description": "AI Incident Response Platform — API Gateway",
         "docs": "/docs",
     }
+
+
+# ── Reverse Proxy / Routing Endpoints ──────────────────────
+
+
+@app.post("/api/v1/orders", tags=["orders"], status_code=status.HTTP_201_CREATED)
+async def create_order_proxy(
+    request: Request,
+    x_correlation_id: str | None = Header(None, alias="X-Correlation-ID"),
+):
+    """Proxy order creation to Order Service."""
+    url = f"{settings.order_service_url.rstrip('/')}/orders"
+    body = await request.json()
+    headers = {"X-Correlation-ID": x_correlation_id or str(uuid.uuid4())}
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(url, json=body, headers=headers)
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type="application/json",
+            headers={"X-Correlation-ID": headers["X-Correlation-ID"]},
+        )
+    except httpx.RequestError as exc:
+        logger.error(f"Failed to proxy request to order service: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Order service unavailable: {str(exc)}",
+        )
+
+
+@app.get("/api/v1/orders/{order_id}", tags=["orders"])
+async def get_order_proxy(
+    order_id: str,
+    x_correlation_id: str | None = Header(None, alias="X-Correlation-ID"),
+):
+    """Proxy order lookup to Order Service."""
+    url = f"{settings.order_service_url.rstrip('/')}/orders/{order_id}"
+    headers = {"X-Correlation-ID": x_correlation_id or str(uuid.uuid4())}
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(url, headers=headers)
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type="application/json",
+            headers={"X-Correlation-ID": headers["X-Correlation-ID"]},
+        )
+    except httpx.RequestError as exc:
+        logger.error(f"Failed to proxy request to order service: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Order service unavailable: {str(exc)}",
+        )
+
+
+@app.get("/api/v1/orders", tags=["orders"])
+async def list_orders_proxy(
+    skip: int = 0,
+    limit: int = 50,
+    x_correlation_id: str | None = Header(None, alias="X-Correlation-ID"),
+):
+    """Proxy list orders to Order Service."""
+    url = f"{settings.order_service_url.rstrip('/')}/orders?skip={skip}&limit={limit}"
+    headers = {"X-Correlation-ID": x_correlation_id or str(uuid.uuid4())}
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(url, headers=headers)
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type="application/json",
+            headers={"X-Correlation-ID": headers["X-Correlation-ID"]},
+        )
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Order service unavailable: {str(exc)}",
+        )
+
+
+@app.get("/api/v1/payments/{payment_id}", tags=["payments"])
+async def get_payment_proxy(
+    payment_id: str,
+    x_correlation_id: str | None = Header(None, alias="X-Correlation-ID"),
+):
+    """Proxy payment lookup to Payment Service."""
+    url = f"{settings.payment_service_url.rstrip('/')}/payments/{payment_id}"
+    headers = {"X-Correlation-ID": x_correlation_id or str(uuid.uuid4())}
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(url, headers=headers)
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type="application/json",
+            headers={"X-Correlation-ID": headers["X-Correlation-ID"]},
+        )
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Payment service unavailable: {str(exc)}",
+        )

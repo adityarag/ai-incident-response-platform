@@ -16,11 +16,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY services/api-gateway/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app/ ./app/
+# Copy shared database module and application code
+COPY database/ ./database/
+COPY services/api-gateway/app/ ./app/
 
 # Expose port
 EXPOSE 8000

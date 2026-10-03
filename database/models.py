@@ -65,6 +65,21 @@ class IncidentType(str, PyEnum):
     RESOURCE_EXHAUSTION = "RESOURCE_EXHAUSTION"
 
 
+class OrderStatus(str, PyEnum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+
+
+class PaymentStatus(str, PyEnum):
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+    REFUNDED = "REFUNDED"
+
+
 # ── Models ─────────────────────────────────────────────────
 
 class Service(Base):
@@ -169,3 +184,74 @@ class AuditLog(Base):
             f"<AuditLog(action={self.action!r}, "
             f"actor={self.actor!r})>"
         )
+
+
+class Order(Base):
+    """Customer order record."""
+
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(String(64), unique=True, nullable=False, index=True)
+    customer_id = Column(String(64), nullable=False, index=True)
+    item = Column(String(255), nullable=False)
+    quantity = Column(Integer, nullable=False, default=1)
+    amount = Column(Float, nullable=False)
+    currency = Column(String(10), nullable=False, default="USD")
+    status = Column(
+        Enum(OrderStatus),
+        nullable=False,
+        default=OrderStatus.PENDING,
+        index=True,
+    )
+    payment_id = Column(String(64), nullable=True)
+    failure_reason = Column(Text, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        return f"<Order(id={self.order_id!r}, status={self.status!r}, amount={self.amount!r})>"
+
+
+class Payment(Base):
+    """Processed transaction record."""
+
+    __tablename__ = "payments"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    payment_id = Column(String(64), unique=True, nullable=False, index=True)
+    order_id = Column(String(64), nullable=False, index=True)
+    customer_id = Column(String(64), nullable=False)
+    amount = Column(Float, nullable=False)
+    currency = Column(String(10), nullable=False, default="USD")
+    status = Column(
+        Enum(PaymentStatus),
+        nullable=False,
+        default=PaymentStatus.PENDING,
+        index=True,
+    )
+    failure_reason = Column(Text, nullable=True)
+    idempotency_key = Column(String(128), unique=True, nullable=True, index=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    def __repr__(self) -> str:
+        return f"<Payment(id={self.payment_id!r}, order_id={self.order_id!r}, status={self.status!r})>"

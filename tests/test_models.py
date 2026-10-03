@@ -14,6 +14,10 @@ from database.models import (
     IncidentSeverity,
     IncidentStatus,
     IncidentType,
+    Order,
+    OrderStatus,
+    Payment,
+    PaymentStatus,
     Service,
     ServiceStatus,
 )
@@ -71,6 +75,57 @@ class TestAuditLogModel:
             "detail", "incident_id", "timestamp",
         }
         assert expected.issubset(columns)
+
+
+class TestOrderModel:
+    """Tests for the Order model."""
+
+    def test_order_tablename(self):
+        assert Order.__tablename__ == "orders"
+
+    def test_order_has_required_columns(self):
+        columns = {c.name for c in Order.__table__.columns}
+        expected = {
+            "id", "order_id", "customer_id", "item",
+            "quantity", "amount", "currency", "status",
+            "payment_id", "failure_reason",
+            "created_at", "updated_at",
+        }
+        assert expected.issubset(columns)
+
+
+class TestPaymentModel:
+    """Tests for the Payment model."""
+
+    def test_payment_tablename(self):
+        assert Payment.__tablename__ == "payments"
+
+    def test_payment_has_required_columns(self):
+        columns = {c.name for c in Payment.__table__.columns}
+        expected = {
+            "id", "payment_id", "order_id", "customer_id",
+            "amount", "currency", "status", "failure_reason",
+            "idempotency_key", "created_at", "updated_at",
+        }
+        assert expected.issubset(columns)
+
+
+class TestOrderStatusEnum:
+    """Tests for OrderStatus enum."""
+
+    def test_all_order_statuses_exist(self):
+        expected = {"PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"}
+        actual = {s.value for s in OrderStatus}
+        assert actual == expected
+
+
+class TestPaymentStatusEnum:
+    """Tests for PaymentStatus enum."""
+
+    def test_all_payment_statuses_exist(self):
+        expected = {"PENDING", "SUCCESS", "FAILED", "REFUNDED"}
+        actual = {s.value for s in PaymentStatus}
+        assert actual == expected
 
 
 class TestServiceStatusEnum:
@@ -135,3 +190,5 @@ class TestDeclarativeBase:
         assert "services" in table_names
         assert "incidents" in table_names
         assert "audit_logs" in table_names
+        assert "orders" in table_names
+        assert "payments" in table_names

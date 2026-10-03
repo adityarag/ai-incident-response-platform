@@ -53,8 +53,8 @@ services:
   # ── API Gateway ──────────────────────────────────────────
   api-gateway:
     build:
-      context: ./services/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
     container_name: platform-api-gateway
     environment:
       POSTGRES_HOST: postgres
@@ -62,8 +62,63 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
       POSTGRES_USER: ${POSTGRES_USER:-platform}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+      ORDER_SERVICE_URL: http://order-service:8001
+      PAYMENT_SERVICE_URL: http://payment-service:8002
     ports:
       - "${API_GATEWAY_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      order-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - platform-net
+
+  # ── Order Service ─────────────────────────────────────────
+  order-service:
+    build:
+      context: .
+      dockerfile: services/order-service/Dockerfile
+    container_name: platform-order-service
+    environment:
+      ORDER_POSTGRES_HOST: postgres
+      ORDER_POSTGRES_PORT: 5432
+      ORDER_POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
+      ORDER_POSTGRES_USER: ${POSTGRES_USER:-platform}
+      ORDER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+      ORDER_PAYMENT_SERVICE_URL: http://payment-service:8002
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      payment-service:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - platform-net
+
+  # ── Payment Service ───────────────────────────────────────
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    container_name: platform-payment-service
+    environment:
+      PAYMENT_POSTGRES_HOST: postgres
+      PAYMENT_POSTGRES_PORT: 5432
+      PAYMENT_POSTGRES_DB: ${POSTGRES_DB:-incident_platform}
+      PAYMENT_POSTGRES_USER: ${POSTGRES_USER:-platform}
+      PAYMENT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+    ports:
+      - "8002:8002"
     depends_on:
       postgres:
         condition: service_healthy

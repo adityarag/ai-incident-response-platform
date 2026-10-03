@@ -16,16 +16,18 @@ Client → API Gateway → [Order Service] → [Payment Service] → PostgreSQL
        Post-Action Verification → Audit Log
 ```
 
-## Current Status: Phase 1 — Foundation ✅
+## Current Status: Phase 2 — Microservices ✅
 
-| Component | Status |
-|-----------|--------|
-| API Gateway | ✅ Running |
-| PostgreSQL | ✅ Running |
-| Database Migrations | ✅ Applied |
-| Health Endpoints | ✅ Working |
-| Tests | ✅ Passing |
-| Docker Compose | ✅ Working |
+| Component | Status | Port |
+|---|---|---|
+| API Gateway | ✅ Running | :8000 |
+| Order Service | ✅ Running | :8001 |
+| Payment Service | ✅ Running | :8002 |
+| PostgreSQL | ✅ Running | :5432 |
+| Database Migrations | ✅ Applied (001, 002) | - |
+| Health Probes | ✅ All Services | - |
+| Cross-Service Flow | ✅ Verified | - |
+| Docker Compose | ✅ Configured | - |
 
 ## Prerequisites
 
@@ -168,7 +170,7 @@ ai-incident-response-platform/
 ## Roadmap
 
 - [x] **Phase 1** — Foundation (API Gateway, PostgreSQL, Docker)
-- [ ] **Phase 2** — Microservices (Order Service, Payment Service)
+- [x] **Phase 2** — Microservices (Order Service, Payment Service)
 - [ ] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
 - [ ] **Phase 4** — Fault Injection
 - [ ] **Phase 5** — AI Investigation Agent
