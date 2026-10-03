@@ -42,7 +42,14 @@ def _get_database_url() -> str:
 
 
 def _check_db() -> dict:
-    """Quick database connectivity check."""
+    """Quick database connectivity check with fault-injection simulation check."""
+    try:
+        from fault_injection.manager import fault_manager
+        if fault_manager.is_db_failure_simulated("api-gateway"):
+            return {"status": "disconnected", "error": "Simulated database connection failure / pool exhaustion"}
+    except ImportError:
+        pass
+
     try:
         engine = create_engine(_get_database_url(), pool_pre_ping=True)
         with engine.connect() as conn:
@@ -79,6 +86,12 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+try:
+    from fault_injection.middleware import attach_fault_injection
+    attach_fault_injection(app, "api-gateway")
+except ImportError:
+    pass
 
 if attach_observability:
     attach_observability(app, "api-gateway")

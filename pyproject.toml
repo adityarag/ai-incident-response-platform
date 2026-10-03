@@ -36,7 +36,7 @@ line-length = 88
 target-version = "py312"
 
 [tool.setuptools.packages.find]
-include = ["database*", "observability*", "tests*"]
+include = ["database*", "observability*", "fault_injection*", "tests*"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]

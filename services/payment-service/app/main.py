@@ -85,6 +85,13 @@ def get_db():
 
 def _check_db() -> dict:
     try:
+        from fault_injection.manager import fault_manager
+        if fault_manager.is_db_failure_simulated("payment-service"):
+            return {"status": "disconnected", "error": "Simulated database connection failure / pool exhaustion"}
+    except ImportError:
+        pass
+
+    try:
         with get_engine().connect() as conn:
             conn.execute(text("SELECT 1"))
         return {"status": "connected"}
@@ -112,6 +119,12 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+try:
+    from fault_injection.middleware import attach_fault_injection
+    attach_fault_injection(app, "payment-service")
+except ImportError:
+    pass
 
 if attach_observability:
     attach_observability(app, "payment-service")

@@ -16,7 +16,7 @@ Client → API Gateway → [Order Service] → [Payment Service] → PostgreSQL
        Post-Action Verification → Audit Log
 ```
 
-## Current Status: Phase 3 — Observability ✅
+## Current Status: Phase 4 — Controlled Fault Injection ✅
 
 | Component | Status | Port |
 |---|---|---|
@@ -28,6 +28,7 @@ Client → API Gateway → [Order Service] → [Payment Service] → PostgreSQL
 | Loki | ✅ Log Aggregation | :3100 |
 | Grafana | ✅ Provisioned Dashboards | :3000 |
 | OpenTelemetry | ✅ Traces & Correlation | - |
+| Fault Injection CLI & API | ✅ Active (/faults/*) | - |
 | Database Migrations | ✅ Applied (001, 002) | - |
 | Health & Metrics Probes | ✅ All Services (`/metrics`) | - |
 
@@ -174,7 +175,7 @@ ai-incident-response-platform/
 - [x] **Phase 1** — Foundation (API Gateway, PostgreSQL, Docker)
 - [x] **Phase 2** — Microservices (Order Service, Payment Service)
 - [x] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
-- [ ] **Phase 4** — Fault Injection
+- [x] **Phase 4** — Fault Injection (Latency, 5xx Spikes, DB Outages, Timeouts)
 - [ ] **Phase 5** — AI Investigation Agent
 - [ ] **Phase 6** — Self-Healing (Policy, Remediation, Verification)
 - [ ] **Phase 7** — Self-Maintaining API

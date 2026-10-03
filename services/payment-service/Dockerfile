@@ -12,8 +12,9 @@ RUN apt-get update && \
 COPY services/payment-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy shared database module if needed or mount as package
 COPY database/ ./database/
+COPY observability/ ./observability/
+COPY fault_injection/ ./fault_injection/
 COPY services/payment-service/app/ ./app/
 
 EXPOSE 8002

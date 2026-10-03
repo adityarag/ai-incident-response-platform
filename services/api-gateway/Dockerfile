@@ -19,8 +19,10 @@ RUN apt-get update && \
 COPY services/api-gateway/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy shared database module and application code
+# Copy shared modules and application code
 COPY database/ ./database/
+COPY observability/ ./observability/
+COPY fault_injection/ ./fault_injection/
 COPY services/api-gateway/app/ ./app/
 
 # Expose port
