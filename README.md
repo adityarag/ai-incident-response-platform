@@ -16,7 +16,7 @@ Client → API Gateway → [Order Service] → [Payment Service] → PostgreSQL
        Post-Action Verification → Audit Log
 ```
 
-## Current Status: Phase 2 — Microservices ✅
+## Current Status: Phase 3 — Observability ✅
 
 | Component | Status | Port |
 |---|---|---|
@@ -24,10 +24,12 @@ Client → API Gateway → [Order Service] → [Payment Service] → PostgreSQL
 | Order Service | ✅ Running | :8001 |
 | Payment Service | ✅ Running | :8002 |
 | PostgreSQL | ✅ Running | :5432 |
+| Prometheus | ✅ Metric Scraping | :9090 |
+| Loki | ✅ Log Aggregation | :3100 |
+| Grafana | ✅ Provisioned Dashboards | :3000 |
+| OpenTelemetry | ✅ Traces & Correlation | - |
 | Database Migrations | ✅ Applied (001, 002) | - |
-| Health Probes | ✅ All Services | - |
-| Cross-Service Flow | ✅ Verified | - |
-| Docker Compose | ✅ Configured | - |
+| Health & Metrics Probes | ✅ All Services (`/metrics`) | - |
 
 ## Prerequisites
 
@@ -171,7 +173,7 @@ ai-incident-response-platform/
 
 - [x] **Phase 1** — Foundation (API Gateway, PostgreSQL, Docker)
 - [x] **Phase 2** — Microservices (Order Service, Payment Service)
-- [ ] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
+- [x] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
 - [ ] **Phase 4** — Fault Injection
 - [ ] **Phase 5** — AI Investigation Agent
 - [ ] **Phase 6** — Self-Healing (Policy, Remediation, Verification)

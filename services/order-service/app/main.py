@@ -22,26 +22,32 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.config import get_settings
 from app.schemas import OrderCreateRequest, OrderResponse
 
-# ── Logging ────────────────────────────────────────────────
+# ── Logging & Observability ────────────────────────────────
 
-class JSONFormatter(logging.Formatter):
-    def format(self, record: logging.LogRecord) -> str:
-        log_obj = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "level": record.levelname,
-            "service": "order-service",
-            "message": record.getMessage(),
-            "logger": record.name,
-        }
-        if hasattr(record, "correlation_id"):
-            log_obj["correlation_id"] = record.correlation_id
-        return json.dumps(log_obj)
+try:
+    from observability.telemetry import setup_service_logger, attach_observability, setup_opentelemetry
+    logger = setup_service_logger("order-service")
+except ImportError:
+    class JSONFormatter(logging.Formatter):
+        def format(self, record: logging.LogRecord) -> str:
+            log_obj = {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "level": record.levelname,
+                "service": "order-service",
+                "message": record.getMessage(),
+                "logger": record.name,
+            }
+            if hasattr(record, "correlation_id"):
+                log_obj["correlation_id"] = record.correlation_id
+            return json.dumps(log_obj)
 
-logger = logging.getLogger("order-service")
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(JSONFormatter())
-logger.handlers = [handler]
-logger.setLevel(logging.INFO)
+    logger = logging.getLogger("order-service")
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(JSONFormatter())
+    logger.handlers = [handler]
+    logger.setLevel(logging.INFO)
+    attach_observability = None
+    setup_opentelemetry = None
 
 # ── Database Session Setup ─────────────────────────────────
 
@@ -107,6 +113,11 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+if attach_observability:
+    attach_observability(app, "order-service")
+if setup_opentelemetry:
+    setup_opentelemetry("order-service", app)
 
 
 @app.middleware("http")

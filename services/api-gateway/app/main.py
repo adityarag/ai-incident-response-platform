@@ -15,14 +15,18 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from sqlalchemy import create_engine, text
 
-# ── Logging ────────────────────────────────────────────────
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
-logger = logging.getLogger("api-gateway")
+try:
+    from observability.telemetry import setup_service_logger, attach_observability, setup_opentelemetry
+    logger = setup_service_logger("api-gateway")
+except ImportError:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+        handlers=[logging.StreamHandler(sys.stdout)],
+    )
+    logger = logging.getLogger("api-gateway")
+    attach_observability = None
+    setup_opentelemetry = None
 
 # ── Database helper ────────────────────────────────────────
 
@@ -75,6 +79,11 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+if attach_observability:
+    attach_observability(app, "api-gateway")
+if setup_opentelemetry:
+    setup_opentelemetry("api-gateway", app)
 
 
 # ── Middleware ─────────────────────────────────────────────
