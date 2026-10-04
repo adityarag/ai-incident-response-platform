@@ -1,0 +1,22 @@
+# Example Terraform Variables for AWS Cloud Deployment
+# Copy to terraform.tfvars and customize before running terraform apply
+
+aws_region      = "us-east-1"
+environment     = "staging"
+cluster_name    = "incident-platform-eks"
+
+vpc_cidr              = "10.0.0.0/16"
+public_subnet_cidrs   = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs  = ["10.0.10.0/24", "10.0.20.0/24"]
+database_subnet_cidrs = ["10.0.30.0/24", "10.0.40.0/24"]
+
+eks_node_instance_types = ["t3.medium"]
+eks_min_size            = 1
+eks_desired_size        = 2
+eks_max_size            = 4
+
+db_instance_class    = "db.t4g.micro"
+db_allocated_storage = 20
+db_name              = "incident_platform"
+db_username          = "platform_admin"
+db_password          = "your_secure_password_here"
