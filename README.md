@@ -142,12 +142,13 @@ ai-incident-response-platform/
 ├── ai_agent/                  # Sandboxed telemetry tools, hypothesis engine & RCA CLI
 ├── remediation/               # Policy engine, autonomous self-healing & approval CLI
 ├── self_maintaining_api/      # OpenAPI diffing, impact analysis, patch & PR generation
+├── evaluation/                # Quantitative benchmarking suite (MTTD, MTTI, MTTR)
 ├── k8s/                       # Kubernetes manifests (StatefulSet, Deployments, Ingress, HPA)
 ├── terraform/                 # AWS IaC (VPC, Amazon EKS, RDS PostgreSQL, ECR, ALB)
 ├── scripts/                   # AWS deployment and teardown automation scripts
 ├── .github/workflows/         # CI/CD pipelines (test matrix, Docker builds, K8s linting)
 ├── tests/                     # Automated integration and unit test suites
-├── docs/                      # Architecture, API, Chaos, AI Agent, K8s & AWS docs
+├── docs/                      # Architecture, API, Chaos, AI Agent, K8s, AWS & Demo docs
 ├── docker-compose.yml         # Local cloud-native multi-service deployment
 ├── pyproject.toml             # Python build configuration and dependencies
 └── README.md
@@ -173,7 +174,7 @@ ai-incident-response-platform/
 - [x] **Phase 7** — Self-Maintaining API (Schema Diff, Impact Analysis, Automated Patch & PR Generation)
 - [x] **Phase 8** — Kubernetes + CI/CD (Manifests, Kustomize, Ingress, HPA, GitHub Actions Pipelines)
 - [x] **Phase 9** — AWS Deployment (Terraform IaC, EKS Cluster, RDS PostgreSQL, ECR Registries, ALB)
-- [ ] **Phase 10** — Evaluation & Demo
+- [x] **Phase 10** — Evaluation & Demo (Benchmarking Framework, MTTD/MTTI/MTTR Metrics, Final Academic Demo Guide)
 
 ## Team
 
