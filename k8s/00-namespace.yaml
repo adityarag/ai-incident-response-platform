@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: incident-platform
+  labels:
+    app.kubernetes.io/name: ai-incident-response-platform
+    app.kubernetes.io/part-of: incident-response-system

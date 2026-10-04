@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: incident-platform
+
+resources:
+  - 00-namespace.yaml
+  - 01-configmap.yaml
+  - 02-secrets.yaml
+  - 03-postgres.yaml
+  - 04-migrations-job.yaml
+  - 05-order-service.yaml
+  - 06-payment-service.yaml
+  - 07-api-gateway.yaml
+  - 08-ingress.yaml
+  - 09-hpa.yaml

@@ -142,8 +142,10 @@ ai-incident-response-platform/
 ├── ai_agent/                  # Sandboxed telemetry tools, hypothesis engine & RCA CLI
 ├── remediation/               # Policy engine, autonomous self-healing & approval CLI
 ├── self_maintaining_api/      # OpenAPI diffing, impact analysis, patch & PR generation
+├── k8s/                       # Kubernetes manifests (StatefulSet, Deployments, Ingress, HPA)
+├── .github/workflows/         # CI/CD pipelines (test matrix, Docker builds, K8s linting)
 ├── tests/                     # Automated integration and unit test suites
-├── docs/                      # Architecture, API, Chaos, AI Agent, and Remediation docs
+├── docs/                      # Architecture, API, Chaos, AI Agent, Remediation & K8s docs
 ├── docker-compose.yml         # Local cloud-native multi-service deployment
 ├── pyproject.toml             # Python build configuration and dependencies
 └── README.md
@@ -167,7 +169,7 @@ ai-incident-response-platform/
 - [x] **Phase 5** — AI Investigation Agent (Sandboxed Telemetry Tools, Hypothesis Engine, Root Cause Analysis)
 - [x] **Phase 6** — Self-Healing (Policy Engine, Automated Remediation, Human-in-the-Loop, Verification)
 - [x] **Phase 7** — Self-Maintaining API (Schema Diff, Impact Analysis, Automated Patch & PR Generation)
-- [ ] **Phase 8** — Kubernetes + CI/CD
+- [x] **Phase 8** — Kubernetes + CI/CD (Manifests, Kustomize, Ingress, HPA, GitHub Actions Pipelines)
 - [ ] **Phase 9** — AWS Deployment
 - [ ] **Phase 10** — Evaluation & Demo
 

@@ -1,0 +1,48 @@
+name: CI Test Suite
+
+"on":
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Platform Tests
+        run: |
+          pytest tests/ -v
+
+      - name: Run API Gateway Unit Tests
+        run: |
+          export PYTHONPATH="services/api-gateway"
+          pytest services/api-gateway/tests/ -v
+
+      - name: Run Order Service Unit Tests
+        run: |
+          export PYTHONPATH="services/order-service"
+          pytest services/order-service/tests/ -v
+
+      - name: Run Payment Service Unit Tests
+        run: |
+          export PYTHONPATH="services/payment-service"
+          pytest services/payment-service/tests/ -v

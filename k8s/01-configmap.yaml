@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-config
+  namespace: incident-platform
+data:
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "incident_platform"
+  POSTGRES_USER: "platform"
+  ORDER_POSTGRES_HOST: "postgres"
+  ORDER_POSTGRES_PORT: "5432"
+  ORDER_POSTGRES_DB: "incident_platform"
+  ORDER_POSTGRES_USER: "platform"
+  PAYMENT_POSTGRES_HOST: "postgres"
+  PAYMENT_POSTGRES_PORT: "5432"
+  PAYMENT_POSTGRES_DB: "incident_platform"
+  PAYMENT_POSTGRES_USER: "platform"
+  ORDER_SERVICE_URL: "http://order-service:8001"
+  PAYMENT_SERVICE_URL: "http://payment-service:8002"
+  ORDER_PAYMENT_SERVICE_URL: "http://payment-service:8002"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
