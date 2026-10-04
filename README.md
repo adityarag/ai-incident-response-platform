@@ -140,8 +140,9 @@ ai-incident-response-platform/
 ├── observability/             # Prometheus, Loki, Grafana provisioning & dashboards
 ├── fault_injection/           # Chaos engineering & controlled fault simulation
 ├── ai_agent/                  # Sandboxed telemetry tools, hypothesis engine & RCA CLI
+├── remediation/               # Policy engine, autonomous self-healing & approval CLI
 ├── tests/                     # Automated integration and unit test suites
-├── docs/                      # Architecture, API, Chaos, and AI Agent specifications
+├── docs/                      # Architecture, API, Chaos, AI Agent, and Remediation docs
 ├── docker-compose.yml         # Local cloud-native multi-service deployment
 ├── pyproject.toml             # Python build configuration and dependencies
 └── README.md
@@ -163,7 +164,7 @@ ai-incident-response-platform/
 - [x] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
 - [x] **Phase 4** — Fault Injection (Latency, 5xx Spikes, DB Outages, Timeouts)
 - [x] **Phase 5** — AI Investigation Agent (Sandboxed Telemetry Tools, Hypothesis Engine, Root Cause Analysis)
-- [ ] **Phase 6** — Self-Healing (Policy Engine, Automated Remediation, Verification)
+- [x] **Phase 6** — Self-Healing (Policy Engine, Automated Remediation, Human-in-the-Loop, Verification)
 - [ ] **Phase 7** — Self-Maintaining API
 - [ ] **Phase 8** — Kubernetes + CI/CD
 - [ ] **Phase 9** — AWS Deployment
