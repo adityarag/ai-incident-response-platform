@@ -141,6 +141,7 @@ ai-incident-response-platform/
 ├── fault_injection/           # Chaos engineering & controlled fault simulation
 ├── ai_agent/                  # Sandboxed telemetry tools, hypothesis engine & RCA CLI
 ├── remediation/               # Policy engine, autonomous self-healing & approval CLI
+├── self_maintaining_api/      # OpenAPI diffing, impact analysis, patch & PR generation
 ├── tests/                     # Automated integration and unit test suites
 ├── docs/                      # Architecture, API, Chaos, AI Agent, and Remediation docs
 ├── docker-compose.yml         # Local cloud-native multi-service deployment
@@ -165,7 +166,7 @@ ai-incident-response-platform/
 - [x] **Phase 4** — Fault Injection (Latency, 5xx Spikes, DB Outages, Timeouts)
 - [x] **Phase 5** — AI Investigation Agent (Sandboxed Telemetry Tools, Hypothesis Engine, Root Cause Analysis)
 - [x] **Phase 6** — Self-Healing (Policy Engine, Automated Remediation, Human-in-the-Loop, Verification)
-- [ ] **Phase 7** — Self-Maintaining API
+- [x] **Phase 7** — Self-Maintaining API (Schema Diff, Impact Analysis, Automated Patch & PR Generation)
 - [ ] **Phase 8** — Kubernetes + CI/CD
 - [ ] **Phase 9** — AWS Deployment
 - [ ] **Phase 10** — Evaluation & Demo
