@@ -133,31 +133,17 @@ uvicorn app.main:app --reload --port 8000
 ```
 ai-incident-response-platform/
 ├── services/
-│   └── api-gateway/           # API Gateway microservice
-│       ├── app/
-│       │   ├── main.py        # FastAPI application
-│       │   └── config.py      # Pydantic settings
-│       ├── tests/
-│       │   ├── conftest.py    # Test fixtures
-│       │   └── test_health.py # Endpoint tests
-│       ├── Dockerfile
-│       └── requirements.txt
-├── database/
-│   ├── models.py              # SQLAlchemy models
-│   ├── session.py             # DB session management
-│   ├── migrations/            # Alembic migrations
-│   │   └── versions/
-│   │       └── 001_initial_schema.py
-│   ├── alembic.ini
-│   ├── init.sql
-│   └── Dockerfile             # Migration runner
-├── tests/
-│   └── test_models.py         # Model unit tests
-├── docs/
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── pyproject.toml
+│   ├── api-gateway/           # API Gateway microservice (:8000)
+│   ├── order-service/         # Order lifecycle microservice (:8001)
+│   └── payment-service/       # Payment processing microservice (:8002)
+├── database/                  # SQLAlchemy models, sessions & Alembic migrations
+├── observability/             # Prometheus, Loki, Grafana provisioning & dashboards
+├── fault_injection/           # Chaos engineering & controlled fault simulation
+├── ai_agent/                  # Sandboxed telemetry tools, hypothesis engine & RCA CLI
+├── tests/                     # Automated integration and unit test suites
+├── docs/                      # Architecture, API, Chaos, and AI Agent specifications
+├── docker-compose.yml         # Local cloud-native multi-service deployment
+├── pyproject.toml             # Python build configuration and dependencies
 └── README.md
 ```
 
@@ -176,8 +162,8 @@ ai-incident-response-platform/
 - [x] **Phase 2** — Microservices (Order Service, Payment Service)
 - [x] **Phase 3** — Observability (OpenTelemetry, Prometheus, Grafana, Loki)
 - [x] **Phase 4** — Fault Injection (Latency, 5xx Spikes, DB Outages, Timeouts)
-- [ ] **Phase 5** — AI Investigation Agent
-- [ ] **Phase 6** — Self-Healing (Policy, Remediation, Verification)
+- [x] **Phase 5** — AI Investigation Agent (Sandboxed Telemetry Tools, Hypothesis Engine, Root Cause Analysis)
+- [ ] **Phase 6** — Self-Healing (Policy Engine, Automated Remediation, Verification)
 - [ ] **Phase 7** — Self-Maintaining API
 - [ ] **Phase 8** — Kubernetes + CI/CD
 - [ ] **Phase 9** — AWS Deployment
