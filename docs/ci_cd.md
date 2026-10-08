@@ -46,8 +46,8 @@ Workflows are maintained under [`.github/workflows/`](file:///c:/Users/adity/Des
 ### C. Kubernetes Manifest Validation (`k8s-validate.yml`)
 - **Triggers**: Push and pull request on `master` branch.
 - **Steps**:
-  1. Runs `kubectl apply --dry-run=client` across all manifests in `k8s/` to catch syntax or schema errors before cluster deployment.
-  2. Validates `kustomize build k8s/` execution to ensure bundle integrity.
+  1. Installs `kubeconform` to perform strict offline OpenAPI schema validation on all resource manifests in `k8s/`.
+  2. Compiles the resource graph via `kubectl kustomize k8s/` and pipes the output into `kubeconform` to ensure end-to-end bundle integrity.
 
 ---
 

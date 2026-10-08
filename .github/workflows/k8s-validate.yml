@@ -18,16 +18,23 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Validate Kubernetes Manifests (Dry-run)
+      - name: Install Kubeconform
         run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar -xz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate Kubernetes Manifests (Schema Validation)
+        run: |
+          echo "Validating Kubernetes manifests with Kubeconform..."
           for manifest in k8s/*.yaml; do
             if [ "$(basename "$manifest")" != "kustomization.yaml" ]; then
               echo "Validating $manifest..."
-              kubectl apply --dry-run=client -f "$manifest"
+              kubeconform -summary -strict "$manifest"
             fi
           done
 
-      - name: Validate Kustomize Build
+      - name: Validate Kustomize Build & Output
         run: |
-          kubectl kustomize k8s/ > /dev/null
-          echo "Kustomize build succeeded."
+          echo "Building Kustomize manifests and validating compiled output..."
+          kubectl kustomize k8s/ | kubeconform -summary -strict
+          echo "Kustomize build and schema validation succeeded."
